@@ -25,7 +25,7 @@ async function getWeatherData(city) {
         }
         const forecastData = await forecastResponse.json();
 
-        displayWeatherData(weatherData);
+        displayWeatherData(weatherData, forecastData);
         displayHourlyForecast(forecastData);
         displayDailyForecast(forecastData);
     } catch (error) {
@@ -33,19 +33,21 @@ async function getWeatherData(city) {
     }
 }
 
-function displayWeatherData(weatherData) {
+function displayWeatherData(weatherData, forecastData) {
     const weatherInfo = document.getElementById('weather-info');
     weatherInfo.style.display = 'block';
 
     const currentTemp = weatherData.main.temp.toFixed(2);
-    const minTemp = weatherData.main.temp_min.toFixed(2);
-    const maxTemp = weatherData.main.temp_max.toFixed(2);
     const humidity = weatherData.main.humidity.toFixed(2);
     const windSpeed = weatherData.wind.speed.toFixed(2);
     const windDirection = weatherData.wind.deg.toFixed(0);
     const description = weatherData.weather[0].description;
 
     const date = new Date(weatherData.dt * 1000).toLocaleDateString();
+
+    // Get min and max temperatures from the forecast data
+    const minTemp = Math.min(...forecastData.list.slice(0, 8).map(item => item.main.temp_min)).toFixed(2);
+    const maxTemp = Math.max(...forecastData.list.slice(0, 8).map(item => item.main.temp_max)).toFixed(2);
 
     weatherInfo.innerHTML = `
         <div class="weather-main">
